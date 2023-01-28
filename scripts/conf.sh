@@ -1,14 +1,28 @@
 #!/usr/bin/env bash
 
+###################################################
+#
+# file: conf.sh
+#
+# @Author:   Iacovos G. Kolokasis
+# @Version:  24-01-2023 
+# @email:    kolokasis@ics.forth.gr
+#
+# Parameters for the artifact evaluation execution
+#
+###################################################
+
 ARTIFACT_EVALUATION_REPO=/opt/kolokasis/asplos23_ae
 DEV="/mnt/fmap/file.txt"
 JAVA_8_PATH="/usr/lib/jvm/java-1.8.0-openjdk"
-JAVA_11_PATH="/usr/lib/jvm/java-1.8.0-openjdk"
-JAVA_17_PATH="/usr/lib/jvm/java-1.8.0-openjdk"
+JAVA_11_PATH="/usr/lib/jvm/java-11-openjdk/"
+JAVA_17_PATH="/usr/java/jdk-17.0.4.1/"
 CC=gcc
 CXX=g++
 
-############# SPARK BENCHMARKS
+##########################################################
+########### PARAMETERS FOR SPARK BENCHMARKS ##############
+##########################################################
 DATA_HDFS="file:///mnt/datasets/SparkBench"
 # Spark master host name
 SPARK_MASTER=sith4-fast
@@ -27,7 +41,9 @@ MNT_H2=/mnt/fmap
 # Iteration
 ITER=1
 
+##########################################################
 ############## DO NOT TOUCH THESE VARIABLES ##############
+##########################################################
 TERAHEAP="teraheap"
 TERAHEAP_REPO="git@github.com:jackkolokasis/teraheap.git"
 TERAHEAP_PATH="$ARTIFACT_EVALUATION_REPO/$TERAHEAP"

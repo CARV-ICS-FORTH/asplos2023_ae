@@ -3,3 +3,4 @@ jdk17u
 jdk8u
 tera_applications
 teraheap
+scripts/build_jvm/compile.out

@@ -1,5 +1,17 @@
 #! /usr/bin/env bash
 
+###################################################
+#
+# file: build_jvm.sh
+#
+# @Author:   Iacovos G. Kolokasis
+# @Version:  24-01-2023 
+# @email:    kolokasis@ics.forth.gr
+#
+# Clone and build OpenJDK8,11,17, and TeraHeap
+#
+###################################################
+
 . ./../conf.sh
 
 ##
@@ -28,12 +40,12 @@ check () {
 #   TeraHeap allocator
 #
 clone_teraheap() {
-  git clone "$TERAHEAP_REPO" >> "$COMPILE_LOG" 2>&1
+  git clone "$TERAHEAP_REPO" > "$COMPILE_LOG" 2>&1
   retValue=$?
   message="Clone TeraHeap repository" 
   check ${retValue} "${message}"
 
-  mv "$TERAHEAP" ../..
+  mv "$TERAHEAP" "${ARTIFACT_EVALUATION_REPO}"/
 }
 
 ##
@@ -92,13 +104,11 @@ build_native_jvm() {
   git clone --depth=1 --branch jdk8u345-b01 \
     git@github.com:openjdk/jdk8u.git >> "$COMPILE_LOG" 2>&1
 
-  mv jdk8u native_jvm
-  mv native_jvm ../../
+  mv jdk8u "${ARTIFACT_EVALUATION_REPO}"/
 
-  cd "$ARTIFACT_EVALUATION_REPO"/native_jvm/ || exit
+  cd "$ARTIFACT_EVALUATION_REPO"/jdk8u/ || exit
 
-  export JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk"
-
+  export JAVA_HOME="${JAVA_8_PATH}"
   {
     make dist-clean
     CC=$CC CXX=$CXX \
@@ -125,11 +135,14 @@ build_native_jvm() {
 build_native_jvm11() {
   git clone --depth=1 --branch jdk-11.0.17+6 \
     git@github.com:openjdk/jdk11u.git >> "$COMPILE_LOG" 2>&1
+  
+  retValue=$?
+  message="Clone OpenJDK11" 
+  check ${retValue} "${message}"
 
-  mv jdk11u native_jvm11
-  mv native_jvm11 ../../
+  mv jdk11u "${ARTIFACT_EVALUATION_REPO}"/
 
-  cd "$ARTIFACT_EVALUATION_REPO"/native_jvm11/ || exit
+  cd "$ARTIFACT_EVALUATION_REPO"/jdk11u/ || exit
   {
     make dist-clean
     CC=$CC CXX=$CXX \
@@ -157,11 +170,14 @@ build_native_jvm11() {
 build_native_jvm17() {
   git clone --depth=1 --branch jdk-17.0.4.1+0 \
     git@github.com:openjdk/jdk17u.git >> "$COMPILE_LOG" 2>&1
+  
+  retValue=$?
+  message="Clone OpenJDK17" 
+  check ${retValue} "${message}"
 
-  mv jdk17u native_jvm17
-  mv native_jvm17 ../../
+  mv jdk17u "${ARTIFACT_EVALUATION_REPO}"/
 
-  cd "$ARTIFACT_EVALUATION_REPO"/native_jvm17/ || exit
+  cd "$ARTIFACT_EVALUATION_REPO"/jdk17u/ || exit
 
 	export JAVA_HOME="$JAVA_17_PATH"
   {
@@ -182,12 +198,10 @@ build_native_jvm17() {
   cd - > /dev/null || exit
 }
 
-clone_tera_apps() {
-  git clone git@github.com:jackkolokasis/tera_applications.git  >> "COMPILE_LOG" 2>&1
-
-  mv tera_applications ../../
-}
-
+##
+# Description: 
+#   Print paths that you have to export in the .bashrc
+#
 print_msg() {
   echo
   echo "-----------------------------------"
@@ -207,7 +221,6 @@ echo "-----------------------------------"
 echo 
 
 clone_teraheap
-clone_tera_apps
 build_allocator
 build_teraheap_jvm
 build_native_jvm

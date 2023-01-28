@@ -1,9 +1,28 @@
 #!/usr/bin/env bash
+
+###################################################
+#
+# file: build_spark.sh
+#
+# @Author:   Iacovos G. Kolokasis
+# @Version:  24-01-2023 
+# @email:    kolokasis@ics.forth.gr
+#
+# Build Spark and SparkBench suite
+#
+###################################################
+
 . ../conf.sh
+
+clone_tera_apps() {
+  git clone git@github.com:jackkolokasis/tera_applications.git  >> "$COMPILE_LOG" 2>&1
+
+  mv tera_applications "${ARTIFACT_EVALUATION_REPO}"/
+}
 
 compile_spark() {
   CUR_DIR=$(pwd)
-  cd ../../tera_applications/spark || exit
+  cd "${ARTIFACT_EVALUATION_REPO}"/tera_applications/spark || exit
 
   command="\"${TERAHEAP_PATH}\""
   sed '/TERAHEAP_REPO=/c\TERAHEAP_REPO='"${command}" config.sh
@@ -19,4 +38,5 @@ compile_spark() {
   cd "$CUR_DIR" || exit
 }
 
+clone_tera_apps
 compile_spark
