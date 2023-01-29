@@ -8,7 +8,8 @@
 # @Version:  24-01-2023 
 # @email:    kolokasis@ics.forth.gr
 #
-# Build Spark and SparkBench suite
+# Build Spark and Giraph frameworks and benchmark 
+# applications
 #
 ###################################################
 
@@ -34,6 +35,10 @@ check () {
     fi
 }
 
+##
+# Description: 
+#   Clone the repo with applications that support TeraHeap
+#
 clone_tera_apps() {
   git clone git@github.com:jackkolokasis/tera_applications.git  >> "$COMPILE_LOG" 2>&1
   
@@ -45,6 +50,10 @@ clone_tera_apps() {
   
 }
 
+##
+# Description: 
+#   Compile Spark and SparkBench suite
+#
 compile_spark() {
   local CUR_DIR
   CUR_DIR=$(pwd)
@@ -65,6 +74,10 @@ compile_spark() {
   cd "$CUR_DIR" || exit
 }
 
+##
+# Description: 
+#   Compile Giraph and LDBC graphalytics benchmark suite
+#
 compile_giraph() {
   local CUR_DIR
   CUR_DIR=$(pwd)
