@@ -90,10 +90,21 @@ compile_giraph() {
   command="TERA_APPS_REPO=\"${ARTIFACT_EVALUATION_REPO}/tera_applications\""
   sed -i '/TERA_APPS_REPO=/c\'"${command}" config.sh
   
+  command="HADOOP_SLAVE=\"${HADOOP_SLAVE}\""
+  sed -i '/HADOOP_SLAVE=/c\'"${command}" config.sh
+  
+  command="HDFS_DIR=\"${HDFS_DIR}\""
+  sed -i '/HDFS_DIR=/c\'"${command}" config.sh
+  
+  command="TERAHEAP_DIR=\"${ARTIFACT_EVALUATION_REPO}/teraheap\""
+  sed -i '/TERAHEAP_DIR=/c\'"${command}" config.sh
+  
+  command="ZK_SNAPSHOT_DIR=\"${MNT_H2}\""
+  sed -i '/ZK_SNAPSHOT_DIR=/c\'"${command}" config.sh
+  
   ./build.sh -a
 
   cd "$CUR_DIR" || exit
-
 }
 
 ##
@@ -126,4 +137,3 @@ clone_tera_apps
 compile_spark
 compile_giraph
 print_msg
-
