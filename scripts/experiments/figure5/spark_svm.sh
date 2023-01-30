@@ -17,10 +17,10 @@
 
 native_heap_size=(54 108)
 native_total_dram=(70 124)
-teraheap_heap_size=(27 27)
-teraheap_total_dram=(43 70)
+teraheap_heap_size=(22 24)
+teraheap_total_dram=(28 30)
 
-generate_spark_datasets TriangleCount
+generate_spark_datasets SVM
 
 for ((i=0; i<"${#native_heap_size[@]}"; i++))
 do

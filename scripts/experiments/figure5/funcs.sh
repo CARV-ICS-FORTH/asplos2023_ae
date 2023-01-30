@@ -16,6 +16,26 @@
 
 ##
 # Description: 
+#   Check if the last command executed succesfully
+#   if executed succesfully, print SUCCEED
+#   if executed with failures, print FAIL and exit
+#
+# Arguments:
+#   $1 - Command return result
+#   $2 - Print message
+#
+check () {
+    if [ "$1" -ne 0 ]
+    then
+        echo -e "  $2 \e[40G [\e[31;1mFAIL\e[0m]"
+        exit
+    else
+        echo -e "  $2 \e[40G [\e[32;1mSUCCED\e[0m]"
+    fi
+}
+
+##
+# Description: 
 #   Setup the spark configuration for the specific workload
 #
 # Arguments:
@@ -204,16 +224,16 @@ parse_results() {
   # Parse the results
   for ((i=0; i<ITER; i++))
   do
-    num=$(grep "TOTAL_TIME" "${directory}"/"${prefix}"_"${heap_size}"_*/PageRank/run"${i}"/conf0/result.csv | awk -F ',' '{print $2}')
+    num=$(grep "TOTAL_TIME" "${directory}"/"${prefix}"_"${heap_size}"_*/*/run"${i}"/conf0/result.csv | awk -F ',' '{print $2}')
     total_time=$(bc <<< "scale=2; ${total_time}+${num}")
 
-    num=$(grep "MINOR_GC" "${directory}"/"${prefix}"_"${heap_size}"_*/PageRank/run"${i}"/conf0/result.csv | awk -F ',' '{print $2}')
+    num=$(grep "MINOR_GC" "${directory}"/"${prefix}"_"${heap_size}"_*/*/run"${i}"/conf0/result.csv | awk -F ',' '{print $2}')
     minor_gc_time=$(bc <<< "scale=2; ${minor_gc_time}+${num}")
 
-    num=$(grep "MAJOR_GC" "${directory}"/"${prefix}"_"${heap_size}"_*/PageRank/run"${i}"/conf0/result.csv | awk -F ',' '{print $2}')
+    num=$(grep "MAJOR_GC" "${directory}"/"${prefix}"_"${heap_size}"_*/*/run"${i}"/conf0/result.csv | awk -F ',' '{print $2}')
     major_gc_time=$(bc <<< "scale=2; ${major_gc_time}+${num}")
 
-    num=$(grep "SERSES" "${directory}"/"${prefix}"_"${heap_size}"_*/PageRank/run"${i}"/conf0/result.csv | awk -F ',' '{print $2}')
+    num=$(grep "SERSES" "${directory}"/"${prefix}"_"${heap_size}"_*/*/run"${i}"/conf0/result.csv | awk -F ',' '{print $2}')
     sd_time=$(bc <<< "scale=2; ${sd_time}+${num}")
   done
 
@@ -282,9 +302,229 @@ calc_norm_results() {
 
   print_empty_rows "$directory" "$workload" "$platform"
 
-  divider=$(head -n 1 spark_pr.csv | awk -F',' '{print $2}')
+  divider=$(head -n 1 "${directory}"/"${platform}"_"${workload}".csv \
+    | awk -F',' '{print $2}')
 
   awk -v div=${divider} -F ',' '{print $1,$2/div,$3/div,$4/div,$5/div}' \
     "${directory}/${platform}_${workload}.csv" \
     >> "${directory}/${platform}_${workload}_norm.csv"
+}
+
+##
+# Description: 
+#   Setup the giraph configuration for the specific workload
+#
+# Arguments:
+#   $1 - Flag indicate if the run is with native jvm or TeraHeap
+#   $2 - Size of the heap
+#   $3 - Total size of DRAM
+##
+setup_giraph_conf() {
+  local is_native=$1
+  local h1_size=$2
+  local mem_budget=$3
+  local workload=$4
+  local dataset_name=$5
+  local card_size="${6:-8}"
+  local region_size="${7:-256}"
+
+  command="BENCHMARK_SUITE=\"${ARTIFACT_EVALUATION_REPO}/tera_applications/giraph/graphalytics-platforms-giraph/graphalytics-1.2.0-giraph-0.2-SNAPSHOT\""
+  sed -i 'BENCHMARK_SUITE=/c\'"$command" conf.sh
+
+  command="HADOOP=\"${ARTIFACT_EVALUATION_REPO}/tera_applications/giraph/hadoop-2.4.0\""
+  sed -i 'HADOOP=/c\'"$command" conf.sh
+
+  command="ZOOKEEPER=\"${ARTIFACT_EVALUATION_REPO}/tera_applications/giraph/zookeeper-3.4.1\""
+  sed -i 'ZOOKEEPER=/c\'"$command" conf.sh
+  
+  command="DATASET_DIR=\"${HDFS_DIR}\""
+  sed -i 'DATASET_DIR=/c\'"$command" conf.sh
+
+  command="ZOOKEEPER_DIR=\"${MNT_H2}\""
+  sed -i 'ZOOKEEPER_DIR=/c\'"$command" conf.sh
+  
+  command="TH_DIR=\"${MNT_H2}\""
+  sed -i 'TH_DIR=/c\'"$command" conf.sh
+  
+  command="DEV_HDFS=${DEV_HDFS}"
+  sed -i 'DEV_HDFS=/c\'"$command" conf.sh
+  
+  command="DEV_ZK=${DEV_ZK}"
+  sed -i 'DEV_ZK=/c\'"$command" conf.sh
+  
+  command="DEV_TH=\"${DEV_TH}\""
+  sed -i 'DEV_TH=/c\'"$command" conf.sh
+  
+  command="TH_FILE_SZ=\"${TH_FILE_SZ}\""
+  sed -i 'TH_FILE_SZ=/c\'"$command" conf.sh
+  
+  command="HEAP=${h1_size}"
+  sed -i 'HEAP=/c\'"$command" conf.sh
+
+  command="GC_THREADS=${GC_THREADS}"
+  sed -i 'GC_THREADS=/c\'"$command" conf.sh
+  
+  command="COMPUTE_THREADS=${COMPUTE_THREADS}"
+  sed -i 'COMPUTE_THREADS=/c\'"$command" conf.sh
+
+  command="BENCHMARKS=( \"${workload}\" )"
+  sed -i 'BENCHMARKS=/c\'"$command" conf.sh
+
+  command="MEM_BUDGET=$mem_budget"
+  sed -i 'MEM_BUDGET=/c\'"$command" conf.sh
+
+  if [ "$card_size" == "512" ]
+  then
+    command="CARD_SIZE=$card_size"
+  else
+    command="CARD_SIZE=\$(($card_size * 1024))"
+  fi
+  sed -i 'CARD_SIZE=/c\'"$command" conf.sh
+    
+  command="REGION_SIZE=\$(($region_size * 1024 * 1024))"
+  sed -i 'REGION_SIZE=/c\'"$command" conf.sh
+  
+  if [ "$is_native" == true ]
+  then
+    command="MY_JAVA_HOME=\"${ARTIFACT_EVALUATION_REPO}/jdk8u/build/linux-x86_64-normal-server-release/jdk\""
+    sed -i 'MY_JAVA_HOME=/c\'"$command" conf.sh
+  else
+    command="MY_JAVA_HOME=\"${TERAHEAP_PATH}/jdk8u345/build/linux-x86_64-normal-server-release/jdk\""
+    sed -i 'MY_JAVA_HOME=/c\'"$command" conf.sh
+  fi
+  
+  command="DATASET_NAME=\"${dataset_name}\""
+  sed -i 'DATASET_NAME=/c\'"$command" conf.sh
+}
+
+##
+# Description: 
+#   Generate the dataset for the giraph workloads
+#
+# Arguments:
+#  $1 - Name of the dataset
+##
+generate_giraph_datasets() {
+  local dataset_name=$1
+  local cur_dir
+    
+  if [ -d "${HDFS_DIR}/graphs" ]
+  then
+    if [ -f "${HDFS_DIR}/graphs/${dataset_name}" ]
+    then
+      return
+    fi
+  fi
+
+  cur_dir=$(pwd)
+
+  cd "${ARTIFACT_EVALUATION_REPO}/tera_applications/giraph/scripts" || exit
+
+  ./download-graphalytics-data-sets.sh "${HDFS_DIR}"
+
+  cd "${cur_dir}" || exit
+}
+
+##
+# Description: 
+#   Run Giraph experiments for the specific workload
+#
+# Arguments:
+#   $1 - Flag indicate if the run is with native jvm or TeraHeap
+#   $2 - Size of the heap
+#   $3 - Total size of DRAM
+#   $4 - Workload name (pr, cdlp, wcc, bfs, sssp)
+##
+run_giraph_experiments() {
+  local is_native=$1
+  local h1_size=$2
+  local mem_budget=$3
+  local workload=$4
+  local dataset_name=$5
+  local prefix=$6
+  local result_path=$7
+  local card_size="${8:-8}"
+  local region_size="${9:-256}"
+  local cur_dir
+
+  cur_dir=$(pwd)
+  
+  cd "${ARTIFACT_EVALUATION_REPO}/tera_applications/giraph/scripts" || exit
+
+  setup_giraph_conf "$is_native" "$h1_size" "$mem_budget" "$workload" "$dataset_name" "$card_size" "$region_size"
+
+  if [ "$is_native" == "true" ]
+  then
+    ./run.sh -n 1 -o "${result_path}/${workload}/${prefix}_${h1_size}_${mem_budget}" -s
+  else
+    ./run.sh -n 1 -o "${result_path}/${workload}/${prefix}_${h1_size}_${mem_budget}" -t
+  fi
+
+  cd "${cur_dir}" || exit
+}
+
+##
+# Description: 
+#   Recompile TeraHeap - jvm for Giraph
+#
+compile_jvm() {
+  cd "$TERAHEAP_PATH"/jdk8u345/ || exit
+
+  sed  -i '/SPARK_POLICY/c\'"${DISABLE_SPARK_POLICY}" hotspot/src/share/vm/memory/sharedDefines.h
+  sed  -i '/ HINT_HIGH_LOW_WATERMARK/c\'"${ENABLE_HIGH_LOW_WATERMARK}" hotspot/src/share/vm/memory/sharedDefines.h
+  
+  ./compile.sh -a > "${COMPILE_LOG}" 2>&1
+  
+  retValue=$?
+  message="Build TeraHeap" 
+  check ${retValue} "${message}"
+
+  cd - > /dev/null || exit
+}
+
+##
+# Description: 
+#   Parse Giraph results
+#
+# Arguments:
+#   $1 - Input directory with the results
+#   $2 - Size of the heap
+#   $3 - Flag indicate if the run is with native jvm or TeraHeap
+#   $4 - Workload name (e.g., pr)
+#   $5 - Platform (e.g., spark/giraph)
+##
+parse_giraph_results() {
+  local directory=$1
+  local heap_size=$2
+  local is_native=$3
+  local workload=$4
+  local platform=$5
+
+  local prefix=$6
+  local total_time=0
+  local minor_gc_time=0
+  local major_gc_time=0
+  local sd_time=0
+
+  # Parse the results
+  for ((i=0; i<ITER; i++))
+  do
+    num=$(grep "TOTAL_TIME" "${directory}"/"${prefix}"_"${heap_size}"_*/*/run"${i}"/conf0/result.csv | awk -F ',' '{print $2}')
+    total_time=$(bc <<< "scale=2; ${total_time}+${num}")
+
+    num=$(grep "MINOR_GC" "${directory}"/"${prefix}"_"${heap_size}"_*/*/run"${i}"/conf0/result.csv | awk -F ',' '{print $2}')
+    minor_gc_time=$(bc <<< "scale=2; ${minor_gc_time}+${num}")
+
+    num=$(grep "MAJOR_GC" "${directory}"/"${prefix}"_"${heap_size}"_*/*/run"${i}"/conf0/result.csv | awk -F ',' '{print $2}')
+    major_gc_time=$(bc <<< "scale=2; ${major_gc_time}+${num}")
+  done
+
+  # Calculate the average
+  total_time=$(bc <<< "scale=2; ${total_time}/${ITER}")
+  minor_gc_time=$(bc <<< "scale=2; ${minor_gc_time}/${ITER}")
+  major_gc_time=$(bc <<< "scale=2; ${major_gc_time}/${ITER}")
+
+  # Write the results to the output file as csv
+  echo "${prefix},${heap_size},${total_time},${major_gc_time},${minor_gc_time},${sd_time}" \
+    >> "${directory}"/"${platform}"_"${workload}".csv
 }

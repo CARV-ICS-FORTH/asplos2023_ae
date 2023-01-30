@@ -39,5 +39,3 @@ done
 calc_norm_results "${ARTIFACT_EVALUATION_REPO}/results/sql" sql spark
 
 sed -i $'3 a th,0,0,0,0\n' "${ARTIFACT_EVALUATION_REPO}/results/sql/spark_sql_norm.csv"
-
-# TODO export figure

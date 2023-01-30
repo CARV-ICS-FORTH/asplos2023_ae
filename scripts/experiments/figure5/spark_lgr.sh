@@ -20,7 +20,7 @@ native_total_dram=(70 124)
 teraheap_heap_size=(27 27)
 teraheap_total_dram=(43 70)
 
-generate_spark_datasets TriangleCount
+generate_spark_datasets LogisticRegression
 
 for ((i=0; i<"${#native_heap_size[@]}"; i++))
 do
