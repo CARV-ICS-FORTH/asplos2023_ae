@@ -49,6 +49,8 @@ cd ./scripts/build_apps
 ```
 The repo after you download the JVMs, frameworks, and benchmarks suits
 will have the following form: 
+
+```sh
 .
 ├── jdk11u
 ├── jdk17u
@@ -61,6 +63,7 @@ will have the following form:
 └── teraheap
 
 8 directories, 1 file
+```
 
 ## Generate Figure 5
 ```sh
