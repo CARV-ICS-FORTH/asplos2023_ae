@@ -14,6 +14,9 @@
 
 . ./funcs.sh
 
+mkdir -p ../../../results/figure5
+mkdir -p ../../../plots/produce/figure5
+
 # Generate Spark plots
 ./spark_pr.sh
 ./spark_cc.sh

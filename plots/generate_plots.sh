@@ -218,17 +218,14 @@ function figure5_giraph {
   fi
 }
 
-function figure3() {
+function figure7() {
   ./jvm17.py \
-		-i ./../out/java17norm2.csv \
-		-n 10 \
-		-c 3 \
-		-o ../../fig/jvm17.eps
-	
-	epstopdf ../../fig/jvm17.eps
-	pdfcrop ../../fig/jvm17.pdf
+    -i ../results/figure7/total_norm.csv \
+    -n 10 \
+    -c 3 \
+    -o ./produce/figure7/jdk17.eps
 
-  rm ../../fig/jvm17.eps ../../fig/jvm17.pdf
+  epstopdf ./produce/figure7/jdk17.eps
 }
 
 cd ./reference/ || exit
@@ -237,5 +234,10 @@ cd ./reference/ || exit
 
 cd - > /dev/null || exit
 
+mkdir -p ./produce/figure5
+mkdir -p ./produce/figure7
+mkdir -p ./produce/figure11
+
 figure5_spark
 figure5_giraph
+figure7
