@@ -28,7 +28,7 @@ Set the following variables in configuration file (./scripts/conf.sh):
 |DEV_SHFL | Device name for shuffle |
 |MNT_SHFL | Mount point for shuffle directory |
 |DEV_H2 | Device for H2 |
-|MNT_H2=/mnt/fmap | Mount point for H2 TeraHeap directory |
+|MNT_H2 | Mount point for H2 TeraHeap directory |
 |HADOOP_SLAVE | Hadoop slave host name |
 |HDFS_DIR | HDFS path |
 |DEV_HDFS | Device for HDFS |
