@@ -12,13 +12,22 @@
 #
 ###################################################
 
+# Path to the artifact evaluation directory
 ARTIFACT_EVALUATION_REPO=/opt/kolokasis/asplos23_ae
+# Path to the file for H2
 DEV="/mnt/fmap/file.txt"
+# Set the path to java8
 JAVA_8_PATH="/usr/lib/jvm/java-1.8.0-openjdk"
+# Set the path to java11
 JAVA_11_PATH="/usr/lib/jvm/java-11-openjdk/"
+# Set the path to java17 
 JAVA_17_PATH="/usr/java/jdk-17.0.4.1/"
+# Set gcc compiler
 CC=gcc
+# Set g++ compiler
 CXX=g++
+# Iteration
+ITER=1
 
 ##########################################################
 ########### PARAMETERS FOR SPARK BENCHMARKS ##############
@@ -38,8 +47,24 @@ MNT_SHFL=/mnt/spark
 DEV_H2=nvme1n1
 # Mount point for H2 TeraHeap directory
 MNT_H2=/mnt/fmap
-# Iteration
-ITER=1
+
+##########################################################
+########### PARAMETERS FOR GIRAPH BENCHMARKS #############
+##########################################################
+# Hadoop slave host name
+HADOOP_SLAVE=sith4-fast
+# HDFS path
+HDFS_DIR="/mnt/datasets"
+# Device for HDFS
+DEV_HDFS=md1
+# Device for Zookeeper
+DEV_ZK=md0
+# Device for TeraHeap or SD
+DEV_TH=md0
+# TeraHeap file size in GB e.g. 900 -> 900GB
+TH_FILE_SZ=700
+# Number of compute threads
+COMPUTE_THREADS=8
 
 ##########################################################
 ############## DO NOT TOUCH THESE VARIABLES ##############
@@ -58,3 +83,19 @@ DISABLE_SPARK_POLICY="//#define SPARK_POLICY"
 
 ENABLE_HIGH_LOW_WATERMARK="#define HINT_HIGH_LOW_WATERMARK"
 DISABLE_HIGH_LOW_WATERMARK="//#define HINT_HIGH_LOW_WATERMARK"
+
+ENABLE_NOHINT_HIGH_LOW_WATERMARK="#define NOHINT_HIGH_LOW_WATERMARK"
+DISABLE_NOHINT_HIGH_LOW_WATERMARK="//#define NOHINT_HIGH_LOW_WATERMARK"
+
+ENABLE_NOHINT_HIGH_WATERMARK="#define NOHINT_HIGH_WATERMARK"
+DISABLE_NOHINT_HIGH_WATERMARK="//#define NOHINT_HIGH_WATERMARK"
+
+FIG5_RESULTS="${ARTIFACT_EVALUATION_REPO}/results/figure5"
+FIG6_RESULTS="${ARTIFACT_EVALUATION_REPO}/results/figure6"
+FIG7_RESULTS="${ARTIFACT_EVALUATION_REPO}/results/figure7"
+FIG8A_RESULTS="${ARTIFACT_EVALUATION_REPO}/results/figure8/figure8a"
+FIG8B_RESULTS="${ARTIFACT_EVALUATION_REPO}/results/figure8/figure8b"
+FIG9_RESULTS="${ARTIFACT_EVALUATION_REPO}/results/figure9"
+FIG10_RESULTS="${ARTIFACT_EVALUATION_REPO}/results/figure10"
+FIG11_RESULTS="${ARTIFACT_EVALUATION_REPO}/results/figure11"
+FIG12_RESULTS="${ARTIFACT_EVALUATION_REPO}/results/figure12"

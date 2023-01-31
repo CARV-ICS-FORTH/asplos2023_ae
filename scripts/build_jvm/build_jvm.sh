@@ -60,9 +60,9 @@ build_allocator() {
   command="#define DEV_SIZE ${DEV_SIZE}"
   sed -i '/DEV_SIZE /c\'"${command}" include/sharedDefines.h
   command="#define REGION_SIZE ${REGION_SIZE}"
-  sed -i '/REGION_SIZE /c\'"${command}" include/sharedDefines.h
+  sed -i '/#define REGION_SIZE/c\'"${command}" include/sharedDefines.h
   command="#define STATISTICS 0"
-  sed -i '/STATISTICS/c\'"${command}" include/sharedDefines.h
+  sed -i '/#define STATISTICS/c\'"${command}" include/sharedDefines.h
 
   ./build.sh  >> "$COMPILE_LOG" 2>&1
   retValue=$?
