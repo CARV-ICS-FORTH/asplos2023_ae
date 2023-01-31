@@ -231,6 +231,11 @@ function figure3() {
   rm ../../fig/jvm17.eps ../../fig/jvm17.pdf
 }
 
+cd ./reference/ || exit
+
+./generate_ref_plots.sh
+
+cd - > /dev/null || exit
+
 figure5_spark
 figure5_giraph
-
