@@ -14,13 +14,13 @@ Set the following variables in configuration file (./scripts/conf.sh):
 |Variable       | Description | 
 |:-------------:|:------------|
 |ARTIFACT_EVALUATION_REPO | Path to the artifact evaluation directory |
-|DEV="/mnt/fmap/file.txt" | Path to the file for H2 |
+|DEV | Path to the file for H2 |
 |JAVA_8_PATH | Set the path to java8 which is installed by the prerequisites packages |
 |JAVA_11_PATH | Set the path to java8 which is installed by the prerequisites packages |
 |JAVA_17_PATH | Set the path to java17 which is installed by the prerequisites packages|
-|CC=gcc | Set gcc compiler |
-|CXX=g++ | Set g++ compiler |
-|ITER=1 | Iteration |
+|CC | Set gcc compiler |
+|CXX | Set g++ compiler |
+|ITER | Iteration |
 |DATA_HDFS | Path to the directory with datasets |
 |SPARK_MASTER | Spark master host name |
 |SPARK_SLAVE | Spark slave host name |
@@ -33,9 +33,9 @@ Set the following variables in configuration file (./scripts/conf.sh):
 |HDFS_DIR | HDFS path |
 |DEV_HDFS | Device for HDFS |
 |DEV_ZK | Device for Zookeeper |
-|DEV_TH=md0 | Device for TeraHeap or SD |
-|TH_FILE_SZ=700 | TeraHeap file size in GB e.g. 900 -> 900GB |
-|COMPUTE_THREADS=8 | Number of compute threads for Giraph|
+|DEV_TH | Device for TeraHeap or SD |
+|TH_FILE_SZ | TeraHeap file size in GB e.g. 900 -> 900GB |
+|COMPUTE_THREADS | Number of compute threads for Giraph|
 
 ## Clone JVM and Applications
 Run the following scripts to build the vanilla JVMs, the JVM with
