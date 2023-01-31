@@ -123,7 +123,7 @@ generate_spark_datasets() {
 
   cur_dir=$(pwd)
 
-  cd ../../../tera_applications/spark/scripts || exit
+  cd "${ARTIFACT_EVALUATION_REPO}"/tera_applications/spark/scripts || exit
 
   if [ "${is_sql}" == "true" ]
   then
@@ -165,7 +165,7 @@ run_spark_experiments() {
   # Transform workload name to lower case
   workload_lower=$(echo "${workload}" | awk '{print tolower($1)}')
 
-  cd ../../../tera_applications/spark/scripts || exit
+  cd "${ARTIFACT_EVALUATION_REPO}/tera_applications/spark/scripts" || exit
 
   setup_spark_conf "$is_native" "$h1_size" "$mem_budget" "$workload"
 
@@ -174,17 +174,17 @@ run_spark_experiments() {
     # Run workload with native JVM
     if [ "${is_custom}" == "false" ]
     then
-      ./run.sh -n 1 -o "${workload_lower}/nat_${h1_size}_${mem_budget}" -s
+      ./run.sh -n 1 -o "${FIG5_RESULTS}/${workload_lower}/nat_${h1_size}_${mem_budget}" -s
     else
-      ./run.sh -n 1 -o "${workload_lower}/nat_${h1_size}_${mem_budget}" -s -b
+      ./run.sh -n 1 -o "${FIG5_RESULTS}/${workload_lower}/nat_${h1_size}_${mem_budget}" -s -b
     fi
   else
     # Run workload with JVM that supports TeraHeap
     if [ "${is_custom}" == "false" ]
     then
-      ./run.sh -n 1 -o "${workload_lower}/th_${h1_size}_${mem_budget}" -t
+      ./run.sh -n 1 -o "${FIG5_RESULTS}/${workload_lower}/th_${h1_size}_${mem_budget}" -t
     else
-      ./run.sh -n 1 -o "${workload_lower}/th_${h1_size}_${mem_budget}" -t -b
+      ./run.sh -n 1 -o "${FIG5_RESULTS}/${workload_lower}/th_${h1_size}_${mem_budget}" -t -b
     fi
   fi
 

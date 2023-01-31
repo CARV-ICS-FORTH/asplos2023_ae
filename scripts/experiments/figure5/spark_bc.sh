@@ -25,17 +25,17 @@ generate_spark_datasets BC true
 for ((i=0; i<"${#native_heap_size[@]}"; i++))
 do
   run_spark_experiments true "${native_heap_size[$i]}" "${native_total_dram[i]}" BC true
-  ./parse_result.sh "${ARTIFACT_EVALUATION_REPO}/results/bc" \
+  ./parse_result.sh "${FIG5_RESULTS}/bc" \
     "${native_heap_size[$i]}" true bc spark
 done
 
 for ((i=0; i<"${#teraheap_heap_size[@]}"; i++))
 do
   run_spark_experiments false "${teraheap_heap_size[$i]}" "${teraheap_total_dram[i]}" BC true
-  parse_results "${ARTIFACT_EVALUATION_REPO}/results/bc" \
+  parse_results "${FIG5_RESULTS}/bc" \
     "${teraheap_heap_size[$i]}" false bc spark
 done
 
-calc_norm_results "${ARTIFACT_EVALUATION_REPO}/results/bc" bc spark
+calc_norm_results "${FIG5_RESULTS}/bc" bc spark
 
-sed -i $'4 a th,0,0,0,0\n' "${ARTIFACT_EVALUATION_REPO}/results/bc/spark_bc_norm.csv"
+sed -i $'4 a th,0,0,0,0\n' "${FIG5_RESULTS}/bc/spark_bc_norm.csv"

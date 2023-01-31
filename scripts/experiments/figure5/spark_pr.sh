@@ -25,15 +25,15 @@ generate_spark_datasets PageRank
 for ((i=0; i<"${#native_heap_size[@]}"; i++))
 do
   run_spark_experiments true "${native_heap_size[$i]}" "${native_total_dram[i]}" PageRank
-  ./parse_result.sh "${ARTIFACT_EVALUATION_REPO}/results/pagerank" \
+  ./parse_result.sh "${FIG5_RESULTS}/pagerank" \
     "${native_heap_size[$i]}" true pr spark
 done
 
 for ((i=0; i<"${#teraheap_heap_size[@]}"; i++))
 do
   run_spark_experiments false "${teraheap_heap_size[$i]}" "${teraheap_total_dram[i]}" PageRank
-  parse_results "${ARTIFACT_EVALUATION_REPO}/results/pagerank" \
+  parse_results "${FIG5_RESULTS}/pagerank" \
     "${teraheap_heap_size[$i]}" false pr spark
 done
 
-calc_norm_results "${ARTIFACT_EVALUATION_REPO}/results/pagerank" pr spark
+calc_norm_results "${FIG5_RESULTS}/pagerank" pr spark

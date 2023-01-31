@@ -25,15 +25,15 @@ generate_spark_datasets ShortestPaths
 for ((i=0; i<"${#native_heap_size[@]}"; i++))
 do
   run_spark_experiments true "${native_heap_size[$i]}" "${native_total_dram[i]}" ShortestPaths
-  ./parse_result.sh "${ARTIFACT_EVALUATION_REPO}/results/shortestpaths" \
+  ./parse_result.sh "${FIG5_RESULTS}/shortestpaths" \
     "${native_heap_size[$i]}" true sp spark
 done
 
 for ((i=0; i<"${#teraheap_heap_size[@]}"; i++))
 do
   run_spark_experiments false "${teraheap_heap_size[$i]}" "${teraheap_total_dram[i]}" ShortestPaths
-  parse_results "${ARTIFACT_EVALUATION_REPO}/results/shortestpaths" \
+  parse_results "${FIG5_RESULTS}/shortestpaths" \
     "${teraheap_heap_size[$i]}" false sp spark
 done
 
-calc_norm_results "${ARTIFACT_EVALUATION_REPO}/results/shortestpaths" sp spark
+calc_norm_results "${FIG5_RESULTS}/shortestpaths" sp spark

@@ -25,15 +25,15 @@ generate_spark_datasets TriangleCount
 for ((i=0; i<"${#native_heap_size[@]}"; i++))
 do
   run_spark_experiments true "${native_heap_size[$i]}" "${native_total_dram[i]}" TriangleCount
-  ./parse_result.sh "${ARTIFACT_EVALUATION_REPO}/results/trianglecount" \
+  ./parse_result.sh "${FIG5_RESULTS}/trianglecount" \
     "${native_heap_size[$i]}" true tr spark
 done
 
 for ((i=0; i<"${#teraheap_heap_size[@]}"; i++))
 do
   run_spark_experiments false "${teraheap_heap_size[$i]}" "${teraheap_total_dram[i]}" TriangleCount
-  parse_results "${ARTIFACT_EVALUATION_REPO}/results/trianglecount" \
+  parse_results "${FIG5_RESULTS}/trianglecount" \
     "${teraheap_heap_size[$i]}" false tr spark
 done
 
-calc_norm_results "${ARTIFACT_EVALUATION_REPO}/results/trianglecount" tr spark
+calc_norm_results "${FIG5_RESULTS}/trianglecount" tr spark

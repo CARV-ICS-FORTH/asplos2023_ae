@@ -25,15 +25,15 @@ generate_spark_datasets LinearRegression
 for ((i=0; i<"${#native_heap_size[@]}"; i++))
 do
   run_spark_experiments true "${native_heap_size[$i]}" "${native_total_dram[i]}" LinearRegression
-  ./parse_result.sh "${ARTIFACT_EVALUATION_REPO}/results/linearregression" \
+  ./parse_result.sh "${FIG5_RESULTS}/linearregression" \
     "${native_heap_size[$i]}" true lr spark
 done
 
 for ((i=0; i<"${#teraheap_heap_size[@]}"; i++))
 do
   run_spark_experiments false "${teraheap_heap_size[$i]}" "${teraheap_total_dram[i]}" LinearRegression
-  parse_results "${ARTIFACT_EVALUATION_REPO}/results/linearregression" \
+  parse_results "${FIG5_RESULTS}/linearregression" \
     "${teraheap_heap_size[$i]}" false lr spark
 done
 
-calc_norm_results "${ARTIFACT_EVALUATION_REPO}/results/linearregression" lr spark
+calc_norm_results "${FIG5_RESULTS}/linearregression" lr spark

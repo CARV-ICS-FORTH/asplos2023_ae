@@ -25,15 +25,15 @@ generate_spark_datasets LogisticRegression
 for ((i=0; i<"${#native_heap_size[@]}"; i++))
 do
   run_spark_experiments true "${native_heap_size[$i]}" "${native_total_dram[i]}" LogisticRegression
-  ./parse_result.sh "${ARTIFACT_EVALUATION_REPO}/results/logisticregression" \
+  ./parse_result.sh "${FIG5_RESULTS}/logisticregression" \
     "${native_heap_size[$i]}" true lgr spark
 done
 
 for ((i=0; i<"${#teraheap_heap_size[@]}"; i++))
 do
   run_spark_experiments false "${teraheap_heap_size[$i]}" "${teraheap_total_dram[i]}" LogisticRegression
-  parse_results "${ARTIFACT_EVALUATION_REPO}/results/logisticregression" \
+  parse_results "${FIG5_RESULTS}/logisticregression" \
     "${teraheap_heap_size[$i]}" false lgr spark
 done
 
-calc_norm_results "${ARTIFACT_EVALUATION_REPO}/results/logisticregression" lgr spark
+calc_norm_results "${FIG5_RESULTS}/logisticregression" lgr spark
